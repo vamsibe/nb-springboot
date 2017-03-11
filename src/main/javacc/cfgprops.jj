@@ -1,0 +1,78 @@
+options {
+    STATIC = false;
+}
+
+
+PARSER_BEGIN(BootCfgParser)
+package com.github.alexfalappa.nbspringboot.cfgeditor.parser;
+
+public class BootCfgParser {
+
+    public BootCfgParser() {}
+}
+PARSER_END(BootCfgParser)
+
+
+
+// white space, blank lines
+TOKEN: {
+    <WHITESPACE: " "|"\t"|"\n"|"\r"|"\f"> |
+    <BLANK_LINE: (<WHITESPACE>)* ("\n"|"\r"|"\r\n")>
+}
+
+// comments
+TOKEN: {
+    <COMMENT_LINE1: (<WHITESPACE>)* "#" (~["\n","\r"])* ("\n"|"\r"|"\r\n")> |
+    <COMMENT_LINE2: (<WHITESPACE>)* "!" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+}
+
+// separators
+TOKEN: {
+    <O_EQUAL: "="> |
+    <O_COLON: ":"> |
+    <O_DOT: "."> |
+    <O_OPENBRACKET: "["> |
+    <O_CLOSEBRACKET: "]">
+}
+
+// numeric literals
+TOKEN: {
+    <#DIGIT: ["0" - "9"] > |
+    <#NONZERO_DIGIT: ["1" - "9"] >
+}
+
+// integers
+TOKEN: {
+    <INTEGER: ( <DIGIT> | <NONZERO_DIGIT> <DIGITS>) > |
+    <DIGITS: ( <DIGIT> )+ >
+}
+
+
+// string literals
+TOKEN: {
+    <STRING: (<ALLOWABLE_CHARACTERS>)* > |
+    <ALLOWABLE_CHARACTERS: (~["\\", "\u0000"-"\u001f"]) >
+}
+
+void parse() :
+{}
+{
+    <COMMENT_LINE1> |
+    <COMMENT_LINE2> |
+    key() (<O_EQUAL>|<O_COLON>) value() 
+    {
+    }
+}
+
+void key() :
+{}
+{
+    <STRING>
+}
+
+
+void value() :
+{}
+{
+    <STRING>
+}
