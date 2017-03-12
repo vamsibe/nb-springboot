@@ -205,11 +205,27 @@
             <version>${netbeans.api.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-lexer</artifactId>
+            <version>${netbeans.api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-csl-api</artifactId>
+            <version>${netbeans.api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-editor-errorstripe</artifactId>
+            <version>${netbeans.api.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.netbeans.contrib.yenta</groupId>
             <artifactId>api</artifactId>
             <version>1.1</version>
             <scope>provided</scope>
         </dependency>
+        <!--test dependencies-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

@@ -24,4 +24,34 @@ limitations under the License.
             <attr name="position" intvalue="805"/>
         </folder>
     </folder>
+
+    <folder name="Editors">
+        <folder name="text">
+            <folder name="application+properties">
+                <attr name="SystemFileSystem.localizingBundle"
+                      stringvalue="com.github.alexfalappa.nbspringboot.cfgeditor.Bundle"/>
+                <folder name="FontsColors">
+                    <folder name="NetBeans">
+                        <folder name="Defaults">
+                            <file name="font-and-colors.xml"
+                                  url="cfgeditor/font-and-colors.xml">
+                                <attr name="SystemFileSystem.localizingBundle"
+                                      stringvalue="com.github.alexfalappa.nbspringboot.cfgeditor.Bundle"/>
+                            </file>
+                        </folder>
+                    </folder>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+
+    <folder name="OptionsDialog">
+        <folder name="PreviewExamples">
+            <folder name="text">
+                <file name="application+properties"
+                      url="cfgeditor/cfg-prop-template.properties"/>
+            </folder>
+        </folder>
+    </folder>
+
 </filesystem>
