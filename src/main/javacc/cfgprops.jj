@@ -1,5 +1,6 @@
 options {
     STATIC = false;
+    LOOKAHEAD = 2;
 }
 
 
@@ -14,25 +15,22 @@ PARSER_END(BootCfgParser)
 
 
 
-// white space, blank lines
+// terminals
 TOKEN: {
-    <WHITESPACE: " "|"\t"|"\n"|"\r"|"\f"> |
-    <BLANK_LINE: (<WHITESPACE>)* ("\n"|"\r"|"\r\n")>
+    <WHITESPACE: " "|"\t"|"\f"> |
+    <EOL: "\n"|"\r"|"\r\n"> |
+// key-value separators
+    <EQUAL: "="> |
+    <COLON: ":"> |
+// other meaningful chars in Spring Boot key syntax
+    <DOT: "."> |
+    <OPENBRACKET: "["> |
+    <CLOSEBRACKET: "]">
 }
 
 // comments
 TOKEN: {
-    <COMMENT_LINE1: (<WHITESPACE>)* "#" (~["\n","\r"])* ("\n"|"\r"|"\r\n")> |
-    <COMMENT_LINE2: (<WHITESPACE>)* "!" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
-}
-
-// separators
-TOKEN: {
-    <O_EQUAL: "="> |
-    <O_COLON: ":"> |
-    <O_DOT: "."> |
-    <O_OPENBRACKET: "["> |
-    <O_CLOSEBRACKET: "]">
+    <COMMENT: ["#","!"] (~["\n","\r"])* >
 }
 
 // numeric literals
@@ -43,31 +41,35 @@ TOKEN: {
 
 // integers
 TOKEN: {
-    <INTEGER: ( <DIGIT> | <NONZERO_DIGIT> <DIGITS>) > |
-    <DIGITS: ( <DIGIT> )+ >
+    <INTEGER: (<DIGIT> | <NONZERO_DIGIT> <DIGITS>) > |
+    <DIGITS: (<DIGIT>)+ >
 }
 
 
 // string literals
 TOKEN: {
-    <STRING: (<ALLOWABLE_CHARACTERS>)* > |
+    <STRING: (<ALLOWABLE_CHARACTERS>)+ > |
     <ALLOWABLE_CHARACTERS: (~["\\", "\u0000"-"\u001f"]) >
 }
 
 void parse() :
 {}
 {
-    <COMMENT_LINE1> |
-    <COMMENT_LINE2> |
-    key() (<O_EQUAL>|<O_COLON>) value() 
+    ( kvPair() | <COMMENT> | (<WHITESPACE>)+ | <EOL> )* <EOF>
     {
     }
+}
+
+void kvPair() :
+{}
+{
+     key() (<WHITESPACE>)* (<EQUAL>|<COLON>) (<WHITESPACE>)* value()
 }
 
 void key() :
 {}
 {
-    <STRING>
+    <STRING> ( <DOT> <STRING>)* ( <OPENBRACKET> <INTEGER> <CLOSEBRACKET> )?
 }
 
 
