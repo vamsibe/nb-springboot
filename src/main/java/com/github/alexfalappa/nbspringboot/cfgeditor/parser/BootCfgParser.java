@@ -6,6 +6,7 @@ import org.parboiled.Action;
 import org.parboiled.BaseParser;
 import org.parboiled.Context;
 import org.parboiled.Rule;
+import org.parboiled.annotations.BuildParseTree;
 import org.parboiled.support.StringBuilderVar;
 import org.parboiled.support.ValueStack;
 import org.parboiled.support.Var;
@@ -24,7 +25,7 @@ import org.parboiled.support.Var;
  *
  * @author Alessandro Falappa
  */
-//@BuildParseTree
+@BuildParseTree
 public class BootCfgParser extends BaseParser<String> {
 
     private Properties parsedProps = new Properties();
