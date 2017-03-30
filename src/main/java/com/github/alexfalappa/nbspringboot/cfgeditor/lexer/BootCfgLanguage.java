@@ -28,7 +28,7 @@ public class BootCfgLanguage extends DefaultLanguageConfig {
 
     @Override
     public Language getLexerLanguage() {
-        return BootCfgTokenId.getLanguage();
+        return new BootCfgLanguageHierarchy().language();
     }
 
     @Override

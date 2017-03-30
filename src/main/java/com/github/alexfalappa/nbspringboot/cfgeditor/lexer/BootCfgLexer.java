@@ -15,7 +15,7 @@
  */
 package com.github.alexfalappa.nbspringboot.cfgeditor.lexer;
 
-import com.github.alexfalappa.nbspringboot.cfgeditor.jcc.SimpleCharStream2;
+import com.github.alexfalappa.nbspringboot.cfgeditor.jcc.SimpleCharStream;
 
 import org.netbeans.spi.lexer.Lexer;
 import org.netbeans.spi.lexer.LexerRestartInfo;
@@ -34,7 +34,7 @@ public class BootCfgLexer implements Lexer<BootCfgTokenId> {
 
     BootCfgLexer(LexerRestartInfo<BootCfgTokenId> info) {
         this.info = info;
-        SimpleCharStream2 stream = new SimpleCharStream2(info.input());
+        SimpleCharStream stream = new SimpleCharStream(info.input());
         cfgParserTokenManager = new BootCfgParserTokenManager(stream);
     }
 

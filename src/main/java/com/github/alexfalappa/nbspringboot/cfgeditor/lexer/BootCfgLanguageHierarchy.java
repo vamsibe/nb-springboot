@@ -36,38 +36,52 @@ public class BootCfgLanguageHierarchy extends LanguageHierarchy<BootCfgTokenId> 
 
     private static void init() {
         tokens = Arrays.<BootCfgTokenId>asList(new BootCfgTokenId[]{
-            /** End of File. */
             new BootCfgTokenId("EOF", "whitespace", 0),
-            /** RegularExpression Id. */
-            new BootCfgTokenId("WHITESPACE", "whitespace", 1),
-            /** RegularExpression Id. */
-            new BootCfgTokenId("BLANK_LINE", "whitespace", 2),
-            /** RegularExpression Id. */
-            new BootCfgTokenId("COMMENT_LINE1", "comment", 3),
-            /** RegularExpression Id. */
-            new BootCfgTokenId("COMMENT_LINE2", "comment", 4),
-            /** RegularExpression Id. */
-            new BootCfgTokenId("O_EQUAL", "keyword", 5),
-            /** RegularExpression Id. */
-            new BootCfgTokenId("O_COLON", "keyword", 6),
-            /** RegularExpression Id. */
-            new BootCfgTokenId("O_DOT", "operator", 7),
-            /** RegularExpression Id. */
-            new BootCfgTokenId("O_OPENBRACKET", "operator", 8),
-            /** RegularExpression Id. */
-            new BootCfgTokenId("O_CLOSEBRACKET", "operator", 9),
-            /** RegularExpression Id. */
-            new BootCfgTokenId("DIGIT", "literal", 10),
-            /** RegularExpression Id. */
-            new BootCfgTokenId("NONZERO_DIGIT", "literal", 11),
-            /** RegularExpression Id. */
-            new BootCfgTokenId("INTEGER", "literal", 12),
-            /** RegularExpression Id. */
-            new BootCfgTokenId("DIGITS", "literal", 13),
-            /** RegularExpression Id. */
-            new BootCfgTokenId("STRING", "literal", 14),
-            /** RegularExpression Id. */
-            new BootCfgTokenId("ALLOWABLE_CHARACTERS", "literal", 15),});
+            new BootCfgTokenId("HEXDIGIT", "number", 1),
+            new BootCfgTokenId("WHITESPACE", "whitespace", 2),
+            new BootCfgTokenId("EOL", "whitespace", 3),
+            new BootCfgTokenId("COMMENT_START", "comment", 4),
+            new BootCfgTokenId("COMMENT_CHAR", "comment", 5),
+            new BootCfgTokenId("COMMENT_EOL", "whitespace", 6),
+            new BootCfgTokenId("KEY_START", "keyword", 7),
+            new BootCfgTokenId("DIGIT", "number", 8),
+            new BootCfgTokenId("NONZERO_DIGIT", "number", 9),
+            new BootCfgTokenId("DIGITS", "number", 10),
+            new BootCfgTokenId("KEY_INTEGER", "keyword", 11),
+            new BootCfgTokenId("KEY_ESC_UNICODE", "keyword", 12),
+            new BootCfgTokenId("KEY_ESC_SPACE", "keyword", 13),
+            new BootCfgTokenId("KEY_ESC_LF", "keyword", 14),
+            new BootCfgTokenId("KEY_ESC_TAB", "keyword", 15),
+            new BootCfgTokenId("KEY_ESC_EQUAL", "keyword", 16),
+            new BootCfgTokenId("KEY_ESC_COLON", "keyword", 17),
+            new BootCfgTokenId("KEY_ESC_POUND", "keyword", 18),
+            new BootCfgTokenId("KEY_ESC_EXCL", "keyword", 19),
+            new BootCfgTokenId("KEY_ESC_BACKSLASH", "keyword", 20),
+            new BootCfgTokenId("KEY_DOT", "keyword", 21),
+            new BootCfgTokenId("KEY_OBRACKET", "separator", 22),
+            new BootCfgTokenId("KEY_CBRACKET", "separator", 23),
+            new BootCfgTokenId("KEY_SEPARATOR", "separator", 24),
+            new BootCfgTokenId("KEY_CHAR", "keyword", 25),
+            new BootCfgTokenId("KEY_WHITESPACE", "keyword", 26),
+            new BootCfgTokenId("KEY_EOL", "whitespace", 27),
+            new BootCfgTokenId("SEP_WHITESPACE", "whitespace", 28),
+            new BootCfgTokenId("SEP_VAL_START", "literal", 29),
+            new BootCfgTokenId("VAL_START", "literal", 30),
+            new BootCfgTokenId("VAL_ESC_UNICODE", "literal", 31),
+            new BootCfgTokenId("VAL_ESC_SPACE", "literal", 32),
+            new BootCfgTokenId("VAL_ESC_EOL", "literal", 33),
+            new BootCfgTokenId("VAL_ESC_EQUAL", "literal", 34),
+            new BootCfgTokenId("VAL_ESC_COLON", "literal", 35),
+            new BootCfgTokenId("VAL_ESC_POUND", "literal", 36),
+            new BootCfgTokenId("VAL_ESC_EXCL", "literal", 37),
+            new BootCfgTokenId("VAL_ESC_LF", "literal", 38),
+            new BootCfgTokenId("VAL_ESC_TAB", "literal", 39),
+            new BootCfgTokenId("VAL_ESC_BACKSLASH", "literal", 40),
+            new BootCfgTokenId("VAL_ESC_MALFORMED", "literal", 41),
+            new BootCfgTokenId("VAL_WHITESPACE", "literal", 42),
+            new BootCfgTokenId("VAL_CHAR", "literal", 43),
+            new BootCfgTokenId("VAL_EOL", "whitespace", 44)
+        });
         idToToken = new HashMap<>();
         for (BootCfgTokenId token : tokens) {
             idToToken.put(token.ordinal(), token);

@@ -15,7 +15,6 @@
  */
 package com.github.alexfalappa.nbspringboot.cfgeditor.lexer;
 
-import org.netbeans.api.lexer.Language;
 import org.netbeans.api.lexer.TokenId;
 
 /**
@@ -33,10 +32,6 @@ public class BootCfgTokenId implements TokenId {
         this.name = name;
         this.primaryCategory = primaryCategory;
         this.id = id;
-    }
-
-    public static Language<BootCfgTokenId> getLanguage() {
-        return new BootCfgLanguageHierarchy().language();
     }
 
     @Override
