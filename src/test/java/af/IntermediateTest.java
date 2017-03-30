@@ -1,9 +1,8 @@
-package com.github.alexfalappa.nbspringboot.cfgeditor.parser;
+package af;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -11,7 +10,7 @@ import org.junit.Test;
  *
  * @author Alessandro Falappa
  */
-@Ignore
+//@Ignore
 public class IntermediateTest extends TestBase {
 
     @Test
@@ -48,6 +47,36 @@ public class IntermediateTest extends TestBase {
     }
 
     @Test
+    public void testSpaceValue() throws URISyntaxException, IOException {
+        System.out.println("\n-- space in value");
+        parseMatch("key=val with spaces");
+    }
+
+    @Test
+    public void testTabKey() throws URISyntaxException, IOException {
+        System.out.println("\n-- tab in key");
+        parseMatch("key\\twith\\ttabs=val");
+    }
+
+    @Test
+    public void testTabValue() throws URISyntaxException, IOException {
+        System.out.println("\n-- tab in value");
+        parseMatch("key=val\\twith\\ttabs");
+    }
+
+    @Test
+    public void testLinefeedKey() throws URISyntaxException, IOException {
+        System.out.println("\n-- linefeed in key");
+        parseMatch("key\\nwith\\nlinefeeds=val");
+    }
+
+    @Test
+    public void testLinefeedValue() throws URISyntaxException, IOException {
+        System.out.println("\n-- linefeed in value");
+        parseMatch("key=val\\nwith\\nlinefeeds");
+    }
+
+    @Test
     public void testEscapedSpaceKey() throws URISyntaxException, IOException {
         System.out.println("\n-- escaped space in key");
         parseMatch("key\\ with\\ spaces=val");
@@ -57,12 +86,6 @@ public class IntermediateTest extends TestBase {
     public void testEscapedSpaceValue() throws URISyntaxException, IOException {
         System.out.println("\n-- escaped space in value");
         parseMatch("key=val\\ with\\ spaces");
-    }
-
-    @Test
-    public void testSpaceValue() throws URISyntaxException, IOException {
-        System.out.println("\n-- space in value");
-        parseMatch("key=val with spaces");
     }
 
     @Test
@@ -116,13 +139,13 @@ public class IntermediateTest extends TestBase {
     @Test
     public void testUnicodeKey() throws URISyntaxException, IOException {
         System.out.println("\n-- unicode in key");
-        parseMatch("key\\u00a9=value");
+        parseMatch("\\u00a9=value");
     }
 
     @Test
     public void testUnicodeValue() throws URISyntaxException, IOException {
         System.out.println("\n-- unicode in value");
-        parseMatch("key=value\\u00A9");
+        parseMatch("key=\\u00A9");
     }
 
     @Test
@@ -133,17 +156,16 @@ public class IntermediateTest extends TestBase {
     }
 
     @Test
-    public void testMultipleArrayNotation() throws URISyntaxException, IOException {
+    public void testArrayNotation() throws URISyntaxException, IOException {
         System.out.println("\n-- array notation");
+        parseMatch(" \t array[12] =\tval1");
+    }
+
+    @Test
+    public void testMultipleArrayNotation() throws URISyntaxException, IOException {
+        System.out.println("\n-- multiple array notation");
         parseMatch(" \t array[0] =\tval1\n"
                 + " prefix.array[1]=val2");
     }
 
-    @Test
-    public void testInvalidArrayNotation() throws URISyntaxException, IOException {
-        System.out.println("\n-- invalid array notation");
-        parseNoMatch(" \t array[00] =\tval1\n"
-                + " prefix.array[01]= val2\n"
-                + " prefix.arr[a]:v3");
-    }
 }

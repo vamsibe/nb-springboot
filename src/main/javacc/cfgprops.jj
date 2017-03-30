@@ -1,80 +1,221 @@
 options {
     STATIC = false;
     LOOKAHEAD = 2;
+    DEBUG_PARSER = true;
+//    BUILD_PARSER = false;
+//    DEBUG_TOKEN_MANAGER = true;
 }
 
 
 PARSER_BEGIN(BootCfgParser)
-package com.github.alexfalappa.nbspringboot.cfgeditor.parser;
+package af;
+
+import java.util.Properties;
 
 public class BootCfgParser {
 
-    public BootCfgParser() {}
+    private Properties parsedProps = new Properties();
+
+    public Properties getParsedProps() {
+        return parsedProps;
+    }
+
+    private String uniToStr(String str) {
+        int codePoint = Integer.parseInt(str.substring(2), 16);
+        return new String(Character.toChars(codePoint));
+    }
 }
 PARSER_END(BootCfgParser)
 
 
+//--- LEXER ---
 
-// terminals
+// common tokens
+TOKEN: {
+    <#HEXDIGIT: ["a"-"f","A"-"F","0"-"9"] >
+}
+
+// whitespace and linefeed in default lexical state
 TOKEN: {
     <WHITESPACE: " "|"\t"|"\f"> |
-    <EOL: "\n"|"\r"|"\r\n"> |
-// key-value separators
-    <EQUAL: "="> |
-    <COLON: ":"> |
-// other meaningful chars in Spring Boot key syntax
-    <DOT: "."> |
-    <OPENBRACKET: "["> |
-    <CLOSEBRACKET: "]">
+    <EOL: "\n"|"\r"|"\r\n">
 }
 
-// comments
+// comments lexical state
 TOKEN: {
-    <COMMENT: ["#","!"] (~["\n","\r"])* >
+    <COMMENT_START: ["#","!"] > :IN_COMMENT
+}
+<IN_COMMENT> TOKEN:{
+    <COMMENT_CHAR: ~["\n","\r"] > |
+    <COMMENT_EOL: "\n"|"\r"|"\r\n" >:DEFAULT
 }
 
-// numeric literals
-TOKEN: {
-    <#DIGIT: ["0" - "9"] > |
-    <#NONZERO_DIGIT: ["1" - "9"] >
+// keys lexical state
+TOKEN:{
+    <KEY_START: (~["#","!","=",":"," ","\t","\f","\u0000"-"\u001f"]) > :IN_KEY
+}
+<IN_KEY> TOKEN:{
+    <#DIGIT: ["0"-"9"] > |
+    <#NONZERO_DIGIT: ["1"-"9"] > |
+    <#DIGITS: (<DIGIT>)+ > |
+    <KEY_INTEGER: (<DIGIT> | <NONZERO_DIGIT> <DIGITS>) > |
+    <KEY_ESC_UNICODE: "\\u" (<HEXDIGIT>){4} > |
+    <KEY_ESC_SPACE: "\\ "> |
+    <KEY_ESC_LF: "\\n"> |
+    <KEY_ESC_TAB: "\\t"> |
+    <KEY_ESC_EQUAL: "\\="> |
+    <KEY_ESC_COLON: "\\:"> |
+    <KEY_ESC_POUND: "\\#"> |
+    <KEY_ESC_EXCL: "\\!"> |
+    <KEY_ESC_BACKSLASH: "\\\\"> |
+    <KEY_DOT: "."> |
+    <KEY_OBRACKET: "["> |
+    <KEY_CBRACKET: "]"> |
+    <KEY_SEPARATOR: ":"|"="> :IN_SEP |
+    <KEY_CHAR: ~["\\",".","[","]",":","="," ","\t","\f","\n","\r","0"-"9"] > |
+    <KEY_WHITESPACE: " "|"\t"|"\f"> |
+    <KEY_EOL: "\n"|"\r"|"\r\n"> :DEFAULT
 }
 
-// integers
-TOKEN: {
-    <INTEGER: (<DIGIT> | <NONZERO_DIGIT> <DIGITS>) > |
-    <DIGITS: (<DIGIT>)+ >
+// separator lexical state
+<IN_SEP> TOKEN:{
+    <SEP_WHITESPACE: " "|"\t"|"\f"> |
+    <SEP_VAL_START: (~["#","!","=",":"," ","\t","\f","\u0000"-"\u001f"]) > :IN_VALUE
+}
+
+// values lexical state
+TOKEN:{
+    <VAL_START: (~["#","!","=",":","\u0000"-"\u001f"]) > :IN_VALUE
+}
+<IN_VALUE> TOKEN:{
+    <VAL_ESC_UNICODE: "\\u" (<HEXDIGIT>){4} > |
+    <VAL_ESC_SPACE: "\\ "> |
+    <VAL_ESC_EOL: "\\\n"|"\\\r"|"\\\r\n"> |
+    <VAL_ESC_EQUAL: "\\="> |
+    <VAL_ESC_COLON: "\\:"> |
+    <VAL_ESC_POUND: "\\#"> |
+    <VAL_ESC_EXCL: "\\!"> |
+    <VAL_ESC_LF: "\\n"> |
+    <VAL_ESC_TAB: "\\t"> |
+    <VAL_ESC_BACKSLASH: "\\\\"> |
+    <VAL_ESC_MALFORMED: "\\" ~["u","n","t"]> |
+    <VAL_WHITESPACE: " "|"\t"|"\f"> |
+    <VAL_CHAR: ~["\\",":","="," ","\t","\f","\n","\r"] > |
+    <VAL_EOL: "\n"|"\r"|"\r\n"> :DEFAULT
 }
 
 
-// string literals
-TOKEN: {
-    <STRING: (<ALLOWABLE_CHARACTERS>)+ > |
-    <ALLOWABLE_CHARACTERS: (~["\\", "\u0000"-"\u001f"]) >
-}
 
-void parse() :
+//--- PARSER ---
+
+
+public void parse() :
 {}
 {
-    ( kvPair() | <COMMENT> | (<WHITESPACE>)+ | <EOL> )* <EOF>
-    {
-    }
+    (keySepValue()|comment()|empty())* <EOF>
 }
 
-void kvPair() :
-{}
+private void keySepValue() :
 {
-     key() (<WHITESPACE>)* (<EQUAL>|<COLON>) (<WHITESPACE>)* value()
+    String k,v="";
+}
+{
+    (
+        k = key()
+        (<KEY_WHITESPACE>)*
+        (
+            <KEY_EOL> |
+            [
+                <KEY_SEPARATOR>
+                (<SEP_WHITESPACE>)*
+                [
+                    v=value()
+                    [<VAL_EOL>]
+                ]
+            ]
+        )
+    ) {parsedProps.put(k,v);}
 }
 
-void key() :
-{}
+private String key() :
 {
-    <STRING> ( <DOT> <STRING>)* ( <OPENBRACKET> <INTEGER> <CLOSEBRACKET> )?
+    Token t;
+    StringBuilder sb=new StringBuilder();
+}
+{
+    (
+        t = <KEY_START> {sb.append(t.image);}
+        (allowedKey(sb))*
+        (
+            t = <KEY_DOT> {sb.append(t.image);}
+            (allowedKey(sb))+
+        )*
+        [<KEY_OBRACKET> t = <KEY_INTEGER><KEY_CBRACKET> {sb.append('[').append(t.image).append(']');} ]
+    ) {return sb.toString();}    
 }
 
+private void allowedKey(StringBuilder sb) :
+{
+    Token t;
+}
+{
+    t = <KEY_ESC_BACKSLASH> {sb.append('\\');} |
+    t = <KEY_ESC_UNICODE> {sb.append(uniToStr(t.image));} |
+    t = <KEY_ESC_SPACE> {sb.append(' ');} |
+    t = <KEY_ESC_LF> {sb.append('\n');} |
+    t = <KEY_ESC_TAB> {sb.append('\t');} |
+    t = <KEY_ESC_EQUAL> {sb.append("=");} |
+    t = <KEY_ESC_COLON> {sb.append(':');} |
+    t = <KEY_ESC_POUND> {sb.append('#');} |
+    t = <KEY_ESC_EXCL> {sb.append('!');} |
+    t = <KEY_INTEGER> {sb.append(t.image);} |
+    t = <KEY_CHAR> {sb.append(t.image);}
+}
 
-void value() :
+private String value() :
+{
+    Token t;
+    StringBuilder sb=new StringBuilder();
+}
+{
+    (
+        (t = <VAL_START> | t = <SEP_VAL_START>) {sb.append(t.image);}
+        (allowedVal(sb))*
+        [
+            <VAL_ESC_EOL>
+            (<VAL_WHITESPACE>)*
+            (allowedVal(sb))*
+        ]
+    ) {return sb.toString();}    
+}
+
+private void allowedVal(StringBuilder sb) :
+{
+    Token t;
+}
+{
+    t = <VAL_ESC_BACKSLASH> {sb.append('\\');} |
+    t = <VAL_ESC_SPACE> {sb.append(' ');} |
+    t = <VAL_ESC_LF> {sb.append('\n');} |
+    t = <VAL_ESC_TAB> {sb.append('\t');} |
+    t = <VAL_ESC_EQUAL> {sb.append('=');} |
+    t = <VAL_ESC_COLON> {sb.append(':');} |
+    t = <VAL_ESC_POUND> {sb.append('#');} |
+    t = <VAL_ESC_EXCL> {sb.append('!');} |
+    t = <VAL_ESC_MALFORMED> {sb.append(t.image.substring(1));} |
+    t = <VAL_ESC_UNICODE> {sb.append(uniToStr(t.image));} |
+    t = <VAL_WHITESPACE> {sb.append(t.image);} |
+    t = <VAL_CHAR> {sb.append(t.image);}
+}
+
+private void comment() :
 {}
 {
-    <STRING>
+    <COMMENT_START> (<COMMENT_CHAR>)* [<COMMENT_EOL>]
+}
+
+private void empty() :
+{}
+{
+    (<WHITESPACE>|<EOL>)+
 }

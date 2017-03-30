@@ -1,4 +1,4 @@
-package com.github.alexfalappa.nbspringboot.cfgeditor.parser;
+package af;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -82,13 +82,13 @@ public class BasicTest extends TestBase {
     @Test
     public void testSingleWhitespace2() throws URISyntaxException, IOException {
         System.out.println("\n-- single with withespace 2");
-        parseMatch(" \t key =\tval");
+        parseMatch(" \t key =\t val");
     }
 
     @Test
     public void testSingleWhitespace3() throws URISyntaxException, IOException {
         System.out.println("\n-- single with withespace 3");
-        parseMatch(" \t key =val");
+        parseMatch(" \t key  =val");
     }
 
     @Test
