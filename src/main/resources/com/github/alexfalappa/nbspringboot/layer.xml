@@ -24,4 +24,46 @@ limitations under the License.
             <attr name="position" intvalue="805"/>
         </folder>
     </folder>
+
+    <folder name="OptionsDialog">
+        <folder name="PreviewExamples">
+            <folder name="text">
+                <file name="application-properties" url="cfgeditor/CfgPropertiesExample"/>
+            </folder>
+        </folder>
+    </folder>
+
+    <folder name="Editors">
+        <folder name="text">
+            <folder name="application-properties">
+                <!--<attr name="SystemFileSystem.localizingBundle" stringvalue="com.github.alexfalappa.nbspringboot.cfgeditor.syntax.Bundle"/>-->
+                <folder name="FontsColors">
+                    <folder name="NetBeans">
+                        <folder name="Defaults">
+                            <file name="com-github-alexfalappa-nbspringboot-cfgeditor-syntax-token-colorings.xml" url="cfgeditor/syntax/fontsColors.xml">
+                                <attr name="SystemFileSystem.localizingBundle" stringvalue="com.github.alexfalappa.nbspringboot.cfgeditor.syntax.Bundle"/>
+                            </file>
+                        </folder>
+                    </folder>
+                </folder>
+                <folder name="Keybindings">
+                    <folder name="NetBeans">
+                        <folder name="Defaults">
+                            <file name="com-github-alexfalappa-nbspringboot-cfgeditor-keybindings.xml" url="cfgeditor/default-key-bindings.xml"/>
+                        </folder>
+                    </folder>
+                </folder>
+                <folder name="Preferences">
+                    <folder name="Defaults">
+                        <file name="com-github-alexfalappa-nbspringboot-cfgeditor-preferences.xml" url="cfgeditor/editor-preferences.xml"/>
+                    </folder>
+                </folder>
+                <file name="EditorKit.instance">
+                    <attr name="instanceClass" stringvalue="com.github.alexfalappa.nbspringboot.cfgeditor.syntax.CfgPropertiesKit"/>
+                    <attr name="instanceOf" stringvalue="javax.swing.text.EditorKit,com.github.alexfalappa.nbspringboot.cfgeditor.syntax.CfgPropertiesKit"/>
+                    <attr name="beaninfo" boolvalue="false"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
 </filesystem>

@@ -1,0 +1,4 @@
+#Line Comment
+
+logger.level.root=debug
+   prefix.array[12]=Value
